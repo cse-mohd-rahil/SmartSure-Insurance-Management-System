@@ -1,9 +1,12 @@
 package com.example.demo.dto;
 
-public class RegisterRequest {
+import jakarta.validation.constraints.NotBlank;
 
+public class RegisterRequest {
     private String name;
+    @NotBlank(message = "Email is required")
     private String email;
+    @NotBlank(message = "Password is required")
     private String password;
     private String phone;
     private String address;
