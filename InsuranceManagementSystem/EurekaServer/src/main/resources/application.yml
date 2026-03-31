@@ -1,11 +1,37 @@
+# server:
+#   port: 8761
+
+# spring:
+#   application:
+#     name: EurekaServer
+
+# eureka:
+#   client:
+#     register-with-eureka: false
+#     fetch-registry: false
+
 server:
   port: 8761
 
 spring:
   application:
-    name: EurekaServer
+    name: EUREKA-SERVER
 
 eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+
+# ✅ LOGGING (FIXED)
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+# ✅ ZIPKIN + TRACING (FIXED)
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans

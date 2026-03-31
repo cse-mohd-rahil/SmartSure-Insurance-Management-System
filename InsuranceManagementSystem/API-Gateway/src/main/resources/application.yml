@@ -1,38 +1,88 @@
+# server:
+#   port: 8080
+
+# spring:
+#   application:
+#     name: API-Gateway
+
+#   cloud:
+#     gateway:
+#       routes:
+
+#         - id: auth-service
+#           uri: lb://AuthService
+#           predicates:
+#             - Path=/api/auth/**
+
+#         - id: policy-service
+#           uri: lb://PolicyService
+#           predicates:
+#             - Path=/api/policies/**
+
+#         - id: claim-service
+#           uri: lb://ClaimsService
+#           predicates:
+#             - Path=/api/claims/**
+
+#         - id: admin-service
+#           uri: lb://AdminService
+#           predicates:
+#             - Path=/api/admin/**
+
+# eureka:
+#   client:
+#     service-url:
+#       defaultZone: http://localhost:8761/eureka/
+
+# springdoc:
+#   swagger-ui:
+#     path: /swagger-ui.html
+#     urls:
+#       - name: AuthService
+#         url: /api/auth/v3/api-docs
+#       - name: PolicyService
+#         url: /api/policies/v3/api-docs
+#       - name: ClaimsService
+#         url: /api/claims/v3/api-docs
+#       - name: AdminService
+#         url: /api/admin/v3/api-docs
+
+
 server:
   port: 8080
 
 spring:
   application:
-    name: API-Gateway
+    name: API-GATEWAY
 
   cloud:
     gateway:
       routes:
 
         - id: auth-service
-          uri: lb://AuthService
+          uri: lb://AUTHSERVICE
           predicates:
             - Path=/api/auth/**
 
         - id: policy-service
-          uri: lb://PolicyService
+          uri: lb://POLICYSERVICE
           predicates:
             - Path=/api/policies/**
 
         - id: claim-service
-          uri: lb://ClaimsService
+          uri: lb://CLAIMSSERVICE
           predicates:
             - Path=/api/claims/**
 
         - id: admin-service
-          uri: lb://AdminService
+          uri: lb://ADMINSERVICE
           predicates:
             - Path=/api/admin/**
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eureka-server:8761/eureka/
 
 springdoc:
   swagger-ui:
@@ -46,3 +96,17 @@ springdoc:
         url: /api/claims/v3/api-docs
       - name: AdminService
         url: /api/admin/v3/api-docs
+
+# ✅ LOGGING (FIXED POSITION)
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+# ✅ ZIPKIN + TRACING (FIXED POSITION)
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans

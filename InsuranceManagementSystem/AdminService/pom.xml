@@ -11,6 +11,7 @@
 	</parent>
 	<groupId>com.capgemini</groupId>
 	<artifactId>AdminService</artifactId>
+	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>AdminService</name>
 	<description />
@@ -77,6 +78,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+		<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-tracing-bridge-brave</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>io.zipkin.reporter2</groupId>
+    <artifactId>zipkin-reporter-brave</artifactId>
+</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

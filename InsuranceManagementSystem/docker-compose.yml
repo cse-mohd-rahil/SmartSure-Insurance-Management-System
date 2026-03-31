@@ -1,0 +1,134 @@
+version: "3.8"
+
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Root@123
+    ports:
+      - "3307:3306"
+    networks:
+      - micro-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  eureka-server:
+    build: ./EurekaServer
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - micro-net
+    restart: on-failure
+
+  auth-service:
+    build: ./AuthService
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: Root@123
+      JWT_SECRET: TXlTdXBlclNlY3JldEtleU15U3VwZXJTZWNyZXRLZXkxMjM0NQ==
+    networks:
+      - micro-net
+    restart: on-failure
+
+  policy-service:
+    build: ./PolicyService
+    container_name: policy-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: Root@123
+      JWT_SECRET: TXlTdXBlclNlY3JldEtleU15U3VwZXJTZWNyZXRLZXkxMjM0NQ==
+    networks:
+      - micro-net
+    restart: on-failure
+
+  claim-service:
+    build: ./ClaimsService
+    container_name: claim-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: Root@123
+      JWT_SECRET: TXlTdXBlclNlY3JldEtleU15U3VwZXJTZWNyZXRLZXkxMjM0NQ==
+    networks:
+      - micro-net
+    restart: on-failure
+
+  admin-service:
+    build: ./AdminService
+    container_name: admin-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      eureka-server:
+        condition: service_started
+    environment:
+      DB_USERNAME: root
+      DB_PASSWORD: Root@123
+      JWT_SECRET: TXlTdXBlclNlY3JldEtleU15U3VwZXJTZWNyZXRLZXkxMjM0NQ==
+    networks:
+      - micro-net
+    restart: on-failure
+
+  api-gateway:
+    build: ./API-Gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka-server:
+        condition: service_started
+    networks:
+      - micro-net
+    restart: on-failure
+
+  # ✅ ZIPKIN SERVICE (CORRECTLY PLACED)
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - micro-net
+
+# ===============================
+# VOLUMES
+# ===============================
+volumes:
+  mysql-data:
+
+# ===============================
+# NETWORKS
+# ===============================
+networks:
+  micro-net:

@@ -1,12 +1,40 @@
+# server:
+#   port: 8083
+
+# spring:
+#   application:
+#     name: ClaimsService
+
+#   datasource:
+#     url: jdbc:mysql://localhost:3306/claim_db
+#     username: root
+#     password: Root@123
+
+#   jpa:
+#     hibernate:
+#       ddl-auto: update
+#     show-sql: true
+
+#   servlet:
+#     multipart:
+#       enabled: true
+#       max-file-size: 10MB
+#       max-request-size: 10MB
+
+# eureka:
+#   client:
+#     service-url:
+#       defaultZone: http://localhost:8761/eureka/
+
 server:
   port: 8083
 
 spring:
   application:
-    name: ClaimsService
+    name: CLAIMSSERVICE
 
   datasource:
-    url: jdbc:mysql://localhost:3306/claim_db
+    url: jdbc:mysql://mysql:3306/claim_db
     username: root
     password: Root@123
 
@@ -24,4 +52,18 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eureka-server:8761/eureka/
+
+# ✅ LOGGING (FIXED)
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+# ✅ ZIPKIN + TRACING (FIXED)
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
